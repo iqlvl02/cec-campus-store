@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CEC Campus Store | Login</title>
+    {% load static %}
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background-color: #000; min-height: 100vh; display: flex; justify-content: center; align-items: center; padding: 20px; }
+        .bg-blur { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-image: url('{% static "image/background.jpg" %}'); background-size: cover; background-position: center; filter: blur(10px) brightness(0.6); z-index: 1; }
+        .login-wrapper { position: relative; z-index: 10; max-width: 450px; width: 100%; }
+        .login-container { background: white; border-radius: 15px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+        .login-header { background: linear-gradient(135deg, #004a99 0%, #002a5c 100%); color: white; padding: 30px; text-align: center; }
+        .login-header img { width: 70px; margin-bottom: 15px; }
+        .login-header h1 { font-size: 1.5rem; }
+        .login-header h1 span { font-size: 1rem; display: block; opacity: 0.9; }
+        .login-body { padding: 35px; }
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; margin-bottom: 8px; font-weight: 600; color: #333; }
+        .form-group input { width: 100%; padding: 12px 15px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 1rem; }
+        .form-group input:focus { outline: none; border-color: #004a99; }
+        .btn-login { width: 100%; padding: 14px; background: #004a99; color: white; border: none; border-radius: 8px; font-size: 1rem; font-weight: bold; cursor: pointer; }
+        .btn-login:hover { background: #003a7a; }
+        .message { padding: 12px; border-radius: 8px; margin-bottom: 20px; }
+        .message.error { background: #ffebee; color: #c62828; border-left: 4px solid #c62828; }
+        .login-footer { text-align: center; margin-top: 20px; padding-top: 20px; border-top: 1px solid #eee; }
+        .login-footer a { color: #004a99; text-decoration: none; }
+    </style>
+</head>
+<body>
+    <div class="bg-blur"></div>
+    <div class="login-wrapper">
+        <div class="login-container">
+            <div class="login-header">
+                <img src="{% static 'image/logo.png' %}" alt="CEC Logo">
+                <h1>CEBU EASTERN COLLEGE <span>宿務東方學院</span></h1>
+                <p>Leon Kilat St., Cebu City</p>
+                <p style="margin-top: 10px;">Pre-Order Login</p>
+            </div>
+            <div class="login-body">
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="message {{ message.tags }}">{{ message }}</div>
+                    {% endfor %}
+                {% endif %}
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="username">Username</label>
+                        <input type="text" id="username" name="username" required autofocus>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <input type="password" id="password" name="password" required>
+                    </div>
+                    <button type="submit" class="btn-login">Login </button>
+                    <div class="login-footer">
+                        Don't have an account? <a href="{% url 'store:register' %}">Register here</a><br>
+                        <a href="{% url 'store:order_create' %}">← Back to Order Form </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

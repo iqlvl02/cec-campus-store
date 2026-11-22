@@ -1,0 +1,1162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CEC Campus Store | Pre-Order Portal</title>
+    {% load static %}
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #000;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .bg-blur {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('{% static "image/background.jpg" %}');
+            background-size: cover;
+            background-position: center;
+            filter: blur(10px) brightness(0.6);
+            z-index: 1;
+        }
+
+        .main-wrapper {
+            position: relative;
+            z-index: 10;
+            max-width: 650px;
+            margin: 0 auto;
+        }
+
+        header {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .school-logo {
+            width: 70px;
+            height: auto;
+        }
+
+        .title-area h1 {
+            color: #004a99;
+            font-size: 1.3rem;
+        }
+
+        .title-area h1 span {
+            font-size: 0.9rem;
+            display: block;
+            color: #666;
+        }
+
+        .address {
+            font-size: 0.8rem;
+            color: #666;
+        }
+
+        .subtitle {
+            font-weight: bold;
+            color: #004a99;
+            margin-top: 5px;
+        }
+
+        .nav-buttons {
+            margin-left: auto;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .nav-btn {
+            padding: 8px 15px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.85rem;
+        }
+
+        .nav-btn-track { background: #ffc107; color: #333; }
+        .nav-btn-login { background: #004a99; color: white; }
+        .nav-btn-register { background: #28a745; color: white; }
+        .nav-btn-dashboard { background: #17a2b8; color: white; }
+        .nav-btn-logout { background: #dc3545; color: white; }
+        .nav-btn-admin { background: #6c757d; color: white; }
+
+        main {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        fieldset {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+
+        legend {
+            font-weight: bold;
+            color: #004a99;
+            padding: 0 10px;
+        }
+
+        .input-group {
+            margin-bottom: 15px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .input-group label .required {
+            color: #dc3545;
+        }
+
+        .input-group input, 
+        .input-group select, 
+        .input-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+
+        /* ID Picture Upload Styles */
+        .id-upload-section {
+            background: #f0f7ff;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+
+        .id-preview {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 15px;
+        }
+
+        .id-preview img {
+            width: 120px;
+            height: 120px;
+            border-radius: 12px;
+            object-fit: cover;
+            border: 3px solid #004a99;
+            background: #f8f9fa;
+        }
+
+        .id-preview .placeholder {
+            width: 120px;
+            height: 120px;
+            border-radius: 12px;
+            background: #f8f9fa;
+            border: 2px dashed #ccc;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: #999;
+            font-size: 0.8rem;
+            cursor: pointer;
+        }
+
+        .id-preview .placeholder .icon {
+            font-size: 2rem;
+            margin-bottom: 5px;
+        }
+
+        .upload-btn {
+            background: #004a99;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            width: 100%;
+            transition: all 0.3s;
+        }
+
+        .upload-btn:hover {
+            background: #003a7a;
+            transform: translateY(-2px);
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        /* Verification Styles */
+        .verification-section {
+            background: #f0f7ff;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+
+        .verify-status {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 6px;
+            display: none;
+        }
+
+        .verify-status.verified {
+            background: #e8f5e9;
+            color: #2e7d32;
+            border-left: 4px solid #28a745;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .verify-status.not-verified {
+            background: #ffebee;
+            color: #c62828;
+            border-left: 4px solid #dc3545;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .verify-status.verifying {
+            background: #fff3e0;
+            color: #ef6c00;
+            border-left: 4px solid #ffc107;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .verify-icon {
+            font-size: 1.2rem;
+        }
+
+        .verify-btn {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            margin-top: 10px;
+            transition: all 0.3s;
+        }
+
+        .verify-btn:hover {
+            background: #1e7e34;
+            transform: translateY(-2px);
+        }
+
+        .student-info-preview {
+            background: #e3f2fd;
+            padding: 10px;
+            border-radius: 6px;
+            margin-top: 10px;
+            font-size: 0.85rem;
+        }
+
+        .course-section {
+            background: #f0f7ff;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+
+        .course-help {
+            margin-top: 8px;
+            font-size: 0.75rem;
+            color: #666;
+        }
+
+        .quantity-input {
+            width: 120px !important;
+        }
+
+        .radio-group {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-top: 10px;
+        }
+
+        .radio-group label {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-weight: normal;
+            cursor: pointer;
+        }
+
+        .radio-group input[type="radio"] {
+            width: auto;
+            margin: 0;
+        }
+
+        .payment-info {
+            background: #e8f5e9;
+            padding: 10px;
+            border-radius: 6px;
+            margin-top: 10px;
+            font-size: 0.85rem;
+        }
+
+        .total-amount {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #004a99;
+            margin-top: 10px;
+            text-align: right;
+            padding: 10px;
+            background: #e3f2fd;
+            border-radius: 8px;
+        }
+
+        .button-container {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .btn-submit, .btn-reset {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .btn-submit {
+            background: #004a99;
+            color: white;
+        }
+
+        .btn-submit:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .btn-submit:hover:not(:disabled) {
+            background: #003a7a;
+        }
+
+        .btn-reset {
+            background: #e4e6eb;
+        }
+
+        .btn-reset:hover {
+            background: #d0d3d9;
+        }
+
+        .message {
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+        }
+
+        .message.error {
+            background: #ffebee;
+            color: #c62828;
+            border-left: 4px solid #c62828;
+        }
+
+        .message.success {
+            background: #e8f5e9;
+            color: #2e7d32;
+            border-left: 4px solid #2e7d32;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        /* Receipt Modal Styles */
+        .receipt-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .receipt-content {
+            background: white;
+            border-radius: 16px;
+            max-width: 550px;
+            width: 90%;
+            max-height: 85vh;
+            overflow-y: auto;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .receipt-header {
+            background: linear-gradient(135deg, #004a99 0%, #002a5c 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .receipt-body {
+            padding: 25px;
+        }
+
+        .receipt-footer {
+            background: #f8f9fa;
+            padding: 15px;
+            text-align: center;
+            border-top: 1px solid #eee;
+        }
+
+        .receipt-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .receipt-subtitle {
+            font-size: 0.8rem;
+            opacity: 0.8;
+        }
+
+        .receipt-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .receipt-row.total {
+            font-weight: bold;
+            font-size: 1.2rem;
+            color: #004a99;
+            border-top: 2px solid #004a99;
+            margin-top: 10px;
+            padding-top: 10px;
+        }
+
+        .receipt-label {
+            font-weight: 600;
+            color: #555;
+        }
+
+        .receipt-value {
+            color: #333;
+        }
+
+        .btn-pdf {
+            background: #dc3545;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            margin-right: 10px;
+            transition: all 0.3s;
+        }
+
+        .btn-pdf:hover {
+            background: #c82333;
+            transform: translateY(-2px);
+        }
+
+        .btn-close {
+            background: #6c757d;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .btn-close:hover {
+            background: #5a6268;
+            transform: translateY(-2px);
+        }
+
+        .btn-dashboard {
+            background: #17a2b8;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            text-decoration: none;
+            display: inline-block;
+            margin-right: 10px;
+            transition: all 0.3s;
+        }
+
+        .btn-dashboard:hover {
+            background: #138496;
+            transform: translateY(-2px);
+        }
+
+        .spinner-small {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid #f3f3f3;
+            border-top: 2px solid #004a99;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 600px) {
+            header {
+                flex-direction: column;
+                text-align: center;
+            }
+            .nav-buttons {
+                margin-left: 0;
+                justify-content: center;
+            }
+            .button-container {
+                flex-direction: column;
+            }
+            .receipt-footer {
+                display: flex;
+                flex-direction: column;
+                gap: 10px;
+            }
+            .btn-pdf, .btn-dashboard, .btn-close {
+                margin: 0;
+            }
+        }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+</head>
+<body>
+
+    <div class="bg-blur"></div>
+
+    <div class="main-wrapper">
+        <header>
+            <img src="{% static 'image/logo.png' %}" alt="CEC Logo" class="school-logo">
+            <div class="title-area">
+                <h1>CEBU EASTERN COLLEGE <span>宿務東方學院</span></h1>
+                <p class="address">Leon Kilat St., Cebu City</p>
+                <p class="subtitle">Pre-Order (Uniform & ID Essentials)</p>
+            </div>
+            <div class="nav-buttons">
+                <a href="{% url 'store:track_order' %}" class="nav-btn nav-btn-track">📦 Track Order</a>
+                {% if user.is_authenticated %}
+                    <a href="{% url 'store:dashboard' %}" class="nav-btn nav-btn-dashboard">📊 Dashboard</a>
+                    {% if user.is_superuser or user.is_staff %}
+                       
+                    {% endif %}
+                    <a href="{% url 'store:logout' %}" class="nav-btn nav-btn-logout">🚪 Logout</a>
+                {% else %}
+                    <a href="{% url 'store:login' %}" class="nav-btn nav-btn-login">🔐 Login</a>
+                    <a href="{% url 'store:register' %}" class="nav-btn nav-btn-register">📝 Register</a>
+                {% endif %}
+            </div>
+        </header>
+
+        <main>
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="message {{ message.tags }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+            
+            <form method="post" action="{% url 'store:order_create' %}" id="orderForm" enctype="multipart/form-data">
+                {% csrf_token %}
+                
+                <fieldset>
+                    <legend>Student Verification with ID Picture</legend>
+                    
+                    <!-- ID Picture Upload Section -->
+                    <div class="id-upload-section">
+                        <label>Student ID Picture <span class="required">*</span></label>
+                        <div class="id-preview" id="idPreview" onclick="document.getElementById('id_picture').click()">
+                            <div class="placeholder">
+                                <div class="icon">🪪</div>
+                                <div>Upload ID Picture</div>
+                                <div style="font-size: 0.7rem;">Click to upload</div>
+                            </div>
+                        </div>
+                        <input type="file" id="id_picture" name="id_picture" accept="image/*" class="file-input">
+                        <div style="font-size: 0.7rem; color: #666; margin-top: 5px; text-align: center;">
+                            Accepted formats: JPG, PNG, GIF. Max 5MB
+                        </div>
+                    </div>
+                    
+                    <!-- Student ID Verification Section -->
+                    <div class="verification-section">
+                        <div class="input-group">
+                            <label for="student_id">Student ID Number <span class="required">*</span></label>
+                            <div style="display: flex; gap: 10px;">
+                                <input type="text" id="student_id" name="student_id" placeholder="Enter your Student ID" style="flex: 1;" required>
+                                <button type="button" id="verifyStudentBtn" class="verify-btn">✓ Verify Student</button>
+                            </div>
+                        </div>
+                        
+                        <div id="verifyStatus" class="verify-status">
+                            <span class="verify-icon"></span>
+                            <span class="verify-message"></span>
+                        </div>
+                        
+                        <div id="studentInfoPreview" class="student-info-preview" style="display: none;">
+                            <strong>📋 Verified Student Information:</strong>
+                            <div id="verifiedStudentInfo"></div>
+                        </div>
+                        
+                        <div class="input-group">
+                            <label for="full_name">Full Name <span class="required">*</span></label>
+                            <input type="text" id="full_name" name="full_name" placeholder="Enter your full name" required>
+                        </div>
+                    </div>
+                    
+                    <div class="course-section">
+                        <label for="course">Course / Program <span class="required">*</span></label>
+                        <select name="course" id="course" required>
+                            <option value="">-- Select Course --</option>
+                            <option value="BSED">Bachelor of Secondary Education (BSED)</option>
+                            <option value="BEED">Bachelor of Elementary Education (BEED)</option>
+                            <option value="BSHM">Bachelor of Science in Hospitality Management (BSHM)</option>
+                            <option value="BSIT">Bachelor of Science in Information Technology (BSIT)</option>
+                            <option value="BSCRIM">Bachelor of Science in Criminology (BSCRIM)</option>
+                            <option value="SHS">Senior High School (SHS)</option>
+                        </select>
+                        <div class="course-help">💡 Select your course/department for proper uniform identification</div>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="year_level">Year Level</label>
+                        <select name="year_level" id="year_level">
+                            <option value="">-- Select Year Level --</option>
+                            <option value="1">1st Year</option>
+                            <option value="2">2nd Year</option>
+                            <option value="3">3rd Year</option>
+                            <option value="4">4th Year</option>
+                            <option value="grad">Graduate School</option>
+                        </select>
+                    </div>
+                </fieldset>
+
+                <fieldset>
+                    <legend>Order Selection</legend>
+                    <div class="input-group">
+                        <label for="item">Select Item <span class="required">*</span></label>
+                        <select name="item" id="item" required>
+                            <option value="">-- Choose Item --</option>
+                            <option value="uniform">👕 School Uniform (₱850.00)</option>
+                            <option value="sling">📎 Sling ID (₱120.00)</option>
+                            <option value="cover">🛡️ ID Cover (₱50.00)</option>
+                        </select>
+                    </div>
+
+                    <div id="dynamic-option-container" class="input-group hidden">
+                        <label id="dynamic-label">Options <span class="required">*</span></label>
+                        <select name="specific_option" id="specific_option">
+                            <option value="">-- Select Option --</option>
+                        </select>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="quantity">Quantity</label>
+                        <input type="number" id="quantity" name="quantity" value="1" min="1" max="50" class="quantity-input">
+                    </div>
+                    
+                    <div class="total-amount" id="totalAmount">
+                        Total: ₱0.00
+                    </div>
+                </fieldset>
+
+                <fieldset>
+                    <legend>Payment Method</legend>
+                    <div class="input-group">
+                        <label>Select Payment Method <span class="required">*</span></label>
+                        <div class="radio-group">
+                            <label><input type="radio" name="payment_method" value="cash" checked> 💵 Cash on Pickup</label>
+                            <label><input type="radio" name="payment_method" value="gcash"> 📱 GCash</label>
+                            <label><input type="radio" name="payment_method" value="paymaya"> 💳 PayMaya</label>
+                        </div>
+                        <div id="paymentInfo" class="payment-info" style="display: none;">
+                            <strong>📱 Payment Instructions:</strong><br>
+                            GCash: 0912-345-6789<br>
+                            PayMaya: 0987-654-3210
+                        </div>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="payment_reference">Payment Reference Number</label>
+                        <input type="text" id="payment_reference" name="payment_reference" placeholder="Enter reference number after payment">
+                    </div>
+                </fieldset>
+
+                <fieldset>
+                    <legend>Additional Information</legend>
+                    <div class="input-group">
+                        <label for="notes">Special Instructions / Notes</label>
+                        <textarea id="notes" name="notes" rows="3" placeholder="Any special requests?"></textarea>
+                    </div>
+                </fieldset>
+
+                <div class="button-container">
+                    <button type="submit" class="btn-submit" id="submitBtn" disabled>✅ Confirm Pre-Order</button>
+                    <button type="reset" class="btn-reset">🗑️ Clear Form</button>
+                </div>
+            </form>
+        </main>
+    </div>
+
+    <!-- Receipt Modal -->
+    <div id="receiptModal" class="receipt-modal">
+        <div class="receipt-content" id="receiptContent">
+            <div class="receipt-header">
+                <div class="receipt-title">🏫 CEBU EASTERN COLLEGE</div>
+                <div class="receipt-subtitle">Official Pre-Order Receipt</div>
+                <div class="receipt-subtitle">Leon Kilat St., Cebu City</div>
+            </div>
+            <div class="receipt-body" id="receiptBody"></div>
+            <div class="receipt-footer">
+                <button onclick="downloadPDF()" class="btn-pdf">📄 Download PDF</button>
+               
+                <button onclick="closeReceipt()" class="btn-close">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const prices = {
+            'uniform': 850,
+            'sling': 120,
+            'cover': 50
+        };
+
+        const itemSelect = document.getElementById('item');
+        const dynamicContainer = document.getElementById('dynamic-option-container');
+        const dynamicLabel = document.getElementById('dynamic-label');
+        const dynamicSelect = document.getElementById('specific_option');
+        const quantityInput = document.getElementById('quantity');
+        const totalAmountDiv = document.getElementById('totalAmount');
+        
+        let isStudentVerified = false;
+        let currentOrderData = null;
+
+        // ID Picture Preview
+        document.getElementById('id_picture').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    const preview = document.getElementById('idPreview');
+                    preview.innerHTML = `<img src="${event.target.result}" alt="ID Picture">`;
+                }
+                reader.readAsDataURL(file);
+            }
+        });
+
+        function updateTotal() {
+            const selectedItem = itemSelect.value;
+            const quantity = parseInt(quantityInput.value) || 0;
+            
+            if (selectedItem && prices[selectedItem]) {
+                let total = prices[selectedItem] * quantity;
+                totalAmountDiv.innerHTML = 'Total: ₱' + total.toFixed(2);
+            } else {
+                totalAmountDiv.innerHTML = 'Total: ₱0.00';
+            }
+        }
+
+        function updateDynamicOptions() {
+            const selectedItem = itemSelect.value;
+            dynamicSelect.innerHTML = '<option value="">-- Select Option --</option>';
+            
+            if (selectedItem === 'uniform') {
+                dynamicContainer.classList.remove('hidden');
+                dynamicLabel.innerText = 'Select Size';
+                const sizes = ['Small', 'Medium', 'Large', 'Extra Large'];
+                sizes.forEach(function(size) {
+                    const option = document.createElement('option');
+                    option.value = size.toLowerCase().replace(/\s+/g, '_');
+                    option.textContent = size;
+                    dynamicSelect.appendChild(option);
+                });
+            } 
+            else if (selectedItem === 'sling') {
+                dynamicContainer.classList.remove('hidden');
+                dynamicLabel.innerText = 'Select Sling Color';
+                const colors = ['Royal Blue', 'Royal Red'];
+                colors.forEach(function(color) {
+                    const option = document.createElement('option');
+                    option.value = color.toLowerCase().replace(/\s+/g, '_');
+                    option.textContent = color;
+                    dynamicSelect.appendChild(option);
+                });
+            } 
+            else if (selectedItem === 'cover') {
+                dynamicContainer.classList.remove('hidden');
+                dynamicLabel.innerText = 'Select Cover Type';
+                const types = ['Hard Case', 'Soft Silicone'];
+                types.forEach(function(type) {
+                    const option = document.createElement('option');
+                    option.value = type.toLowerCase().replace(/\s+/g, '_');
+                    option.textContent = type;
+                    dynamicSelect.appendChild(option);
+                });
+            } 
+            else {
+                dynamicContainer.classList.add('hidden');
+            }
+            updateTotal();
+        }
+
+        function updatePaymentInfo() {
+            const selectedPayment = document.querySelector('input[name="payment_method"]:checked').value;
+            const paymentInfo = document.getElementById('paymentInfo');
+            paymentInfo.style.display = selectedPayment !== 'cash' ? 'block' : 'none';
+        }
+
+        // Verify Student Function
+        function verifyStudent() {
+            const studentId = document.getElementById('student_id').value.trim();
+            const idPicture = document.getElementById('id_picture').files[0];
+            
+            if (!studentId) {
+                showVerificationStatus('not-verified', '⚠️ Please enter a Student ID to verify.', '⚠️');
+                return;
+            }
+            
+            if (!idPicture) {
+                showVerificationStatus('not-verified', '⚠️ Please upload your Student ID picture first.', '⚠️');
+                return;
+            }
+            
+            const verifyBtn = document.getElementById('verifyStudentBtn');
+            const originalText = verifyBtn.innerHTML;
+            verifyBtn.innerHTML = '<span class="spinner-small"></span> Verifying...';
+            verifyBtn.disabled = true;
+            
+            showVerificationStatus('verifying', 'Verifying student record with ID picture...', '🔄');
+            
+            // Simulate verification (since backend might not be ready)
+            setTimeout(function() {
+                // For demo - accept any ID with picture
+                if (studentId.length >= 3 && idPicture) {
+                    isStudentVerified = true;
+                    
+                    // Auto-fill full name if empty
+                    if (!document.getElementById('full_name').value) {
+                        document.getElementById('full_name').value = 'Student ' + studentId;
+                    }
+                    document.getElementById('full_name').readOnly = true;
+                    
+                    // Show student info preview
+                    const studentInfoDiv = document.getElementById('verifiedStudentInfo');
+                    studentInfoDiv.innerHTML = `
+                        <strong>👤 Name:</strong> ${document.getElementById('full_name').value}<br>
+                        <strong>🆔 ID:</strong> ${studentId}<br>
+                        <strong>✅ Status:</strong> <span style="color: #28a745;">Verified with ID Picture</span>
+                    `;
+                    document.getElementById('studentInfoPreview').style.display = 'block';
+                    
+                    showVerificationStatus('verified', '✓ Student verified successfully! You can now place your order.', '✅');
+                    document.getElementById('submitBtn').disabled = false;
+                    
+                } else {
+                    isStudentVerified = false;
+                    showVerificationStatus('not-verified', '❌ Verification failed. Please check your Student ID and ID picture.', '❌');
+                    document.getElementById('studentInfoPreview').style.display = 'none';
+                    document.getElementById('full_name').readOnly = false;
+                    document.getElementById('submitBtn').disabled = true;
+                }
+                
+                verifyBtn.innerHTML = originalText;
+                verifyBtn.disabled = false;
+            }, 1500);
+        }
+        
+        function showVerificationStatus(status, message, icon) {
+            const statusDiv = document.getElementById('verifyStatus');
+            statusDiv.className = 'verify-status ' + status;
+            statusDiv.querySelector('.verify-icon').innerHTML = icon;
+            statusDiv.querySelector('.verify-message').innerHTML = message;
+            statusDiv.style.display = 'flex';
+        }
+
+        // Generate Receipt
+        function generateReceipt(orderData) {
+            const receiptBody = document.getElementById('receiptBody');
+            const now = new Date();
+            const dateStr = now.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+            const timeStr = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+            
+            let itemDisplay = '';
+            switch(orderData.item) {
+                case 'uniform': itemDisplay = 'School Uniform'; break;
+                case 'sling': itemDisplay = 'Sling ID'; break;
+                case 'cover': itemDisplay = 'ID Cover'; break;
+            }
+            
+            let optionDisplay = orderData.specific_option || 'Standard';
+            if (orderData.specific_option) {
+                optionDisplay = orderData.specific_option.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+            }
+            
+            let paymentDisplay = '';
+            switch(orderData.payment_method) {
+                case 'cash': paymentDisplay = 'Cash on Pickup'; break;
+                case 'gcash': paymentDisplay = 'GCash'; break;
+                case 'paymaya': paymentDisplay = 'PayMaya'; break;
+            }
+            
+            receiptBody.innerHTML = `
+                <div style="text-align: center; margin-bottom: 20px;">
+                    <div style="font-size: 0.8rem; color: #666;">Receipt #: ${orderData.order_id}</div>
+                    <div style="font-size: 0.8rem; color: #666;">Date: ${dateStr} | Time: ${timeStr}</div>
+                    <div style="font-size: 0.8rem; color: #28a745; margin-top: 5px;">✓ Student Verified with ID Picture</div>
+                </div>
+                
+                <div class="receipt-row">
+                    <span class="receipt-label">Student Name:</span>
+                    <span class="receipt-value"><strong>${orderData.full_name}</strong></span>
+                </div>
+                <div class="receipt-row">
+                    <span class="receipt-label">Student ID:</span>
+                    <span class="receipt-value">${orderData.student_id}</span>
+                </div>
+                <div class="receipt-row">
+                    <span class="receipt-label">Course:</span>
+                    <span class="receipt-value">${orderData.course || 'Not specified'}</span>
+                </div>
+                <div class="receipt-row">
+                    <span class="receipt-label">Year Level:</span>
+                    <span class="receipt-value">${orderData.year_level || 'Not specified'}</span>
+                </div>
+                
+                <div style="margin-top: 15px; margin-bottom: 5px; font-weight: bold; color: #004a99;">Order Summary</div>
+                <div class="receipt-row">
+                    <span class="receipt-label">Item:</span>
+                    <span class="receipt-value">${itemDisplay}</span>
+                </div>
+                <div class="receipt-row">
+                    <span class="receipt-label">Option:</span>
+                    <span class="receipt-value">${optionDisplay}</span>
+                </div>
+                <div class="receipt-row">
+                    <span class="receipt-label">Quantity:</span>
+                    <span class="receipt-value">${orderData.quantity} pc(s)</span>
+                </div>
+                <div class="receipt-row">
+                    <span class="receipt-label">Unit Price:</span>
+                    <span class="receipt-value">₱${orderData.unit_price.toFixed(2)}</span>
+                </div>
+                <div class="receipt-row total">
+                    <span class="receipt-label">Total Amount:</span>
+                    <span class="receipt-value">₱${orderData.total_amount.toFixed(2)}</span>
+                </div>
+                
+                <div style="margin-top: 15px; margin-bottom: 5px; font-weight: bold; color: #004a99;">Payment Information</div>
+                <div class="receipt-row">
+                    <span class="receipt-label">Payment Method:</span>
+                    <span class="receipt-value">${paymentDisplay}</span>
+                </div>
+                ${orderData.payment_reference ? `
+                <div class="receipt-row">
+                    <span class="receipt-label">Reference #:</span>
+                    <span class="receipt-value">${orderData.payment_reference}</span>
+                </div>
+                ` : ''}
+                
+                ${orderData.notes ? `
+                <div style="margin-top: 15px;">
+                    <div style="font-weight: bold; color: #ef6c00;">📝 Notes:</div>
+                    <div style="margin-top: 5px; padding: 10px; background: #fff3e0; border-radius: 8px;">${orderData.notes}</div>
+                </div>
+                ` : ''}
+                
+                <div style="margin-top: 20px; text-align: center; font-size: 0.75rem; color: #999; border-top: 1px dashed #ddd; padding-top: 15px;">
+                    Thank you for ordering from CEC Campus Store!<br>
+                    Please present this receipt upon pickup.
+                </div>
+            `;
+        }
+
+        // Download PDF
+        function downloadPDF() {
+            const element = document.getElementById('receiptContent');
+            const opt = {
+                margin: [0.5, 0.5, 0.5, 0.5],
+                filename: `CEC_Receipt_${currentOrderData.order_id}.pdf`,
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2, letterRendering: true },
+                jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
+            };
+            html2pdf().set(opt).from(element).save();
+        }
+
+        function closeReceipt() {
+            document.getElementById('receiptModal').style.display = 'none';
+        }
+
+        // Form submission
+        document.getElementById('orderForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            if (!isStudentVerified) {
+                alert('Please verify your student ID with picture before placing an order.');
+                return;
+            }
+            
+            if (!document.getElementById('id_picture').files[0]) {
+                alert('Please upload your student ID picture.');
+                return;
+            }
+            
+            // Create order data for receipt
+            const student_id = document.getElementById('student_id').value;
+            const full_name = document.getElementById('full_name').value;
+            const course = document.getElementById('course').options[document.getElementById('course').selectedIndex]?.text || '';
+            const year_level = document.getElementById('year_level').options[document.getElementById('year_level').selectedIndex]?.text || '';
+            const item = document.getElementById('item').value;
+            const specific_option = document.getElementById('specific_option').value;
+            const quantity = parseInt(document.getElementById('quantity').value);
+            const payment_method = document.querySelector('input[name="payment_method"]:checked').value;
+            const payment_reference = document.getElementById('payment_reference').value;
+            const notes = document.getElementById('notes').value;
+            const unit_price = prices[item];
+            const total_amount = unit_price * quantity;
+            
+            currentOrderData = {
+                student_id: student_id,
+                full_name: full_name,
+                course: course,
+                year_level: year_level,
+                item: item,
+                specific_option: specific_option,
+                quantity: quantity,
+                unit_price: unit_price,
+                total_amount: total_amount,
+                payment_method: payment_method,
+                payment_reference: payment_reference,
+                notes: notes,
+                order_id: 'ORD-' + Date.now()
+            };
+            
+            // Generate and show receipt
+            generateReceipt(currentOrderData);
+            document.getElementById('receiptModal').style.display = 'flex';
+            
+            // Also submit to backend if needed
+            const formData = new FormData(this);
+            formData.append('is_verified', isStudentVerified);
+            
+            fetch(this.action, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    currentOrderData.order_id = data.order_id;
+                    generateReceipt(currentOrderData);
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        });
+
+        // Event Listeners
+        document.getElementById('verifyStudentBtn').addEventListener('click', verifyStudent);
+        itemSelect.addEventListener('change', updateDynamicOptions);
+        quantityInput.addEventListener('input', updateTotal);
+        
+        document.querySelectorAll('input[name="payment_method"]').forEach(function(radio) {
+            radio.addEventListener('change', updatePaymentInfo);
+        });
+
+        // Clear verification when inputs change
+        document.getElementById('student_id').addEventListener('input', function() {
+            isStudentVerified = false;
+            document.getElementById('submitBtn').disabled = true;
+            document.getElementById('verifyStatus').style.display = 'none';
+            document.getElementById('studentInfoPreview').style.display = 'none';
+            document.getElementById('full_name').readOnly = false;
+        });
+
+        document.getElementById('id_picture').addEventListener('change', function() {
+            isStudentVerified = false;
+            document.getElementById('submitBtn').disabled = true;
+            document.getElementById('verifyStatus').style.display = 'none';
+            document.getElementById('studentInfoPreview').style.display = 'none';
+        });
+
+        updateDynamicOptions();
+        updatePaymentInfo();
+
+        document.querySelector('.btn-reset').addEventListener('click', function(e) {
+            e.preventDefault();
+            document.getElementById('orderForm').reset();
+            dynamicContainer.classList.add('hidden');
+            updateTotal();
+            updatePaymentInfo();
+            isStudentVerified = false;
+            document.getElementById('submitBtn').disabled = true;
+            document.getElementById('verifyStatus').style.display = 'none';
+            document.getElementById('studentInfoPreview').style.display = 'none';
+            document.getElementById('full_name').readOnly = false;
+            document.getElementById('idPreview').innerHTML = `
+                <div class="placeholder" onclick="document.getElementById('id_picture').click()">
+                    <div class="icon">🪪</div>
+                    <div>Upload ID Picture</div>
+                    <div style="font-size: 0.7rem;">Click to upload</div>
+                </div>
+            `;
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,166 @@
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+body {
+    background-color: #000;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.bg-blur {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('../image/background.jpg');
+    background-size: cover;
+    background-position: center;
+    filter: blur(10px) brightness(0.6);
+    z-index: 1;
+}
+
+.main-wrapper {
+    position: relative;
+    z-index: 10;
+    width: 100%;
+    max-width: 550px;
+    padding: 20px;
+}
+
+header {
+    background: #ffffff;
+    display: flex;
+    align-items: center;
+    padding: 20px;
+    margin-bottom: 20px;
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+}
+
+.school-logo {
+    width: 80px;
+    height: auto;
+    margin-right: 20px;
+}
+
+.title-area h1 {
+    color: #004a99;
+    font-size: 1.6rem;
+    font-weight: 800;
+}
+
+.title-area h1 span {
+    font-weight: 400;
+    font-size: 1.4rem;
+    color: #333;
+    display: block;
+}
+
+.address {
+    font-size: 0.8rem;
+    color: #666;
+    margin-top: 5px;
+}
+
+.subtitle {
+    font-weight: bold;
+    color: #333;
+    margin-top: 5px;
+}
+
+main {
+    background: white;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+}
+
+fieldset {
+    border: 1px solid #ddd;
+    padding: 15px;
+    margin-bottom: 20px;
+    border-radius: 8px;
+}
+
+legend {
+    font-weight: bold;
+    color: #004a99;
+    padding: 0 10px;
+}
+
+.input-group {
+    margin-bottom: 15px;
+}
+
+.hidden {
+    display: none;
+}
+
+label {
+    display: block;
+    font-size: 0.9rem;
+    margin-bottom: 5px;
+    font-weight: 600;
+}
+
+input[type="text"],
+select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 1rem;
+}
+
+.button-container {
+    display: flex;
+    gap: 10px;
+}
+
+button {
+    padding: 12px;
+    border: none;
+    border-radius: 6px;
+    font-weight: bold;
+    cursor: pointer;
+    flex: 1;
+}
+
+.btn-submit {
+    background: #004a99;
+    color: white;
+}
+
+.btn-reset {
+    background: #e4e6eb;
+}
+
+.message {
+    padding: 10px;
+    margin-bottom: 15px;
+    border-radius: 5px;
+    background: #ffebee;
+    color: #c62828;
+    border: 1px solid #ef9a9a;
+}
+
+@media (max-width: 480px) {
+    header {
+        flex-direction: column;
+        text-align: center;
+    }
+    .school-logo {
+        margin: 0 0 15px 0;
+    }
+    .button-container {
+        flex-direction: column;
+    }
+}
